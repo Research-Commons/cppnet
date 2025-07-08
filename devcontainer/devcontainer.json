@@ -1,13 +1,20 @@
 {
-  "name": "cppnet-dev",
+  "name": "cppnet",
   "build": {
     "dockerfile": "Dockerfile"
   },
-  "settings": {
-    "terminal.integrated.shell.linux": "/bin/bash"
+  "workspaceFolder": "/app",
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      },
+      "extensions": ["ms-vscode.cpptools", "ms-vscode.cmake-tools"]
+    }
   },
-  "extensions": ["ms-vscode.cpptools", "ms-vscode.cmake-tools"],
-  "mounts": ["source=${localWorkspaceFolder},target=/workspace,type=bind"],
-  "workspaceFolder": "/workspace",
-  "postCreateCommand": "cmake -S . -B build && cmake --build build"
+
+  "mounts": ["source=${localWorkspaceFolder},target=/app,type=bind"],
+
+  "postCreateCommand": "cmake . && make"
 }
