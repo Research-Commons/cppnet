@@ -1,0 +1,3 @@
+# Ignore specific files in .devcontainer
+.devcontainer/devcontainer.json
+.devcontainer/resintall-cmake.sh
