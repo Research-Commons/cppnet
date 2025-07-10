@@ -24,8 +24,8 @@ RUN git clone https://github.com/nodejs/llhttp.git /opt/llhttp && \
     make
 
 # Copy the built llhttp static library and header to system locations
-RUN cp /opt/llhttp/build/c/llhttp.a /usr/local/lib/ && \
-    cp /opt/llhttp/include/llhttp.h /usr/local/include/
+RUN cp /opt/llhttp/build/libllhttp.a /usr/local/lib/ && \
+    cp /opt/llhttp/build/llhttp.h /usr/local/include/
 
 # Set working directory for your project
 WORKDIR /app
