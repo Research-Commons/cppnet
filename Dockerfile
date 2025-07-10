@@ -9,13 +9,16 @@ RUN apt-get update && \
         curl \
         wget \
         pkg-config \
-        libssl-dev \
-        nodejs \
-        npm
+        libssl-dev
 
+# Remove conflicting package before Node.js install
+RUN apt-get remove -y libnode-dev || true
+
+# Install Node.js (for llhttp build)
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs
 
+# Clone and build llhttp
 RUN git clone https://github.com/nodejs/llhttp.git /opt/llhttp && \
     cd /opt/llhttp && \
     npm ci && \
