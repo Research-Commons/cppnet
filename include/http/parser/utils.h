@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <cctype>
 #include <sstream>
-#include "types.h"
+#include "../include/http/types.h"
 
 namespace http
 {
