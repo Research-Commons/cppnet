@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "../../include/http/parser/parser.h"
+#include "../include/http/parser/parser.h"
 
 int main()
 {
