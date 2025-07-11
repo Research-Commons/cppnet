@@ -14,6 +14,11 @@ int main()
                                "\r\n"
                                "{\"key\": \"value\"}";
 
+    for (int i = 0; i < 10; ++i)
+    {
+        std::cout << "Char " << i << ": '" << http_request[i] << "' (" << int(http_request[i]) << ")\n";
+    }
+
     bool success = parser.feed(http_request.c_str(), http_request.size());
 
     if (!success)
