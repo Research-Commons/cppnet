@@ -2,6 +2,7 @@
 #include "../include/http/parser/callbacks.h"
 #include "../include/http/parser/utils.h"
 #include <cstring>
+#include <iostream>
 #include <stdexcept>
 
 namespace http
@@ -41,7 +42,8 @@ namespace http
         llhttp_errno_t err = llhttp_execute(&parser_, data, length);
         if (err != HPE_OK)
         {
-            // Optionally, you can throw or log llhttp_get_error_reason(&parser_)
+            std::cerr << "llhttp error: " << llhttp_errno_name(err) << " - "
+                      << llhttp_get_error_reason(&parser_) << std::endl;
             return false;
         }
         return true;
