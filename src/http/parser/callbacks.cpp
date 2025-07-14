@@ -89,6 +89,8 @@ namespace http
                 parser.last_header_field.clear();
                 parser.last_header_value.clear();
             }
+            // Set HTTP method from llhttp parser state (IMPORTANT FIX)
+            parser.request.method = method_from_string(parser.parser_.method);
             // Here you can set HTTP version or other connection parameters if needed
             return 0;
         }
