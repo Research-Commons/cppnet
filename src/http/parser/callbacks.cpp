@@ -2,6 +2,7 @@
 #include "../include/http/parser/parser.h"
 #include <cstring>
 #include <iostream>
+#include <sstream>
 
 namespace http
 {
@@ -33,11 +34,7 @@ namespace http
             return Method::UNKNOWN;
         }
 
-        int on_method(Parser &parser, const std::string &method_str)
-        {
-            parser.request.method = method_from_string(method_str);
-            return 0;
-        }
+        // REMOVE on_method callback entirely
 
         int on_url(Parser &parser, const char *at, size_t length)
         {
@@ -89,7 +86,13 @@ namespace http
                 parser.last_header_field.clear();
                 parser.last_header_value.clear();
             }
-            // *** DO NOT extract or print parser_.method here! ***
+
+            // Parse the HTTP method from the request line
+            std::istringstream iss(parser.request_line);
+            std::string method_str;
+            iss >> method_str;
+            parser.request.method = method_from_string(method_str);
+
             return 0;
         }
 
