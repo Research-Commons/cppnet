@@ -30,6 +30,7 @@ namespace http
 
     void Parser::reset()
     {
+        llhttp_settings_init(&settings_);
         llhttp_init(&parser_, HTTP_REQUEST, &settings_);
         parser_.data = this;
         request = Request();
