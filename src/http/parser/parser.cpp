@@ -123,4 +123,9 @@ namespace http
     int Parser::on_message_complete(llhttp_t *parser)
     {
         Parser *self = get_self(parser);
-        int ret = callbacks
+        int ret = callbacks::on_message_complete(*self);
+        self->message_complete = true;
+        return ret;
+    }
+
+} // namespace http

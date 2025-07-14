@@ -34,6 +34,7 @@ namespace http
 
         // Message completion flag (set by callbacks)
         bool message_complete = false;
+        std::string request_line; // Store the first line of the HTTP request
 
         llhttp_t parser_;
         llhttp_settings_t settings_;
