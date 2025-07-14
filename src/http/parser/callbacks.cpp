@@ -90,14 +90,22 @@ namespace http
                 parser.last_header_value.clear();
             }
 
-            // Corrected: cast parser.parser_.method to const char* for both ternary and string construction
+            // Defensive: check pointer and avoid printing raw pointer
             const char *method_ptr = reinterpret_cast<const char *>(parser.parser_.method);
-            std::cout << "parser.parser_.method: "
-                      << (method_ptr ? method_ptr : "NULL") << std::endl;
-
-            if (method_ptr)
+            if (method_ptr != nullptr)
             {
-                parser.request.method = method_from_string(std::string(method_ptr));
+                // Optionally, check for a reasonable method length
+                size_t max_method_len = 16; // HTTP methods are short
+                size_t actual_len = strnlen(method_ptr, max_method_len + 1);
+                if (actual_len > 0 && actual_len <= max_method_len)
+                {
+                    parser.request.method = method_from_string(std::string(method_ptr, actual_len));
+                }
+                else
+                {
+                    parser.request.method = Method::UNKNOWN;
+                    std::cerr << "[ERROR] parser_.method is invalid or not null-terminated\n";
+                }
             }
             else
             {
