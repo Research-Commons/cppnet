@@ -90,12 +90,12 @@ namespace http
                 parser.last_header_value.clear();
             }
 
-            // Defensive: check pointer and avoid printing raw pointer
             const char *method_ptr = reinterpret_cast<const char *>(parser.parser_.method);
-            if (method_ptr != nullptr)
-            {
-                // Optionally, check for a reasonable method length
-                size_t max_method_len = 16; // HTTP methods are short
+            uintptr_t method_addr = reinterpret_cast<uintptr_t>(method_ptr);
+
+            if (method_ptr && method_addr > 0x1000)
+            { // avoid null and low addresses
+                size_t max_method_len = 32;
                 size_t actual_len = strnlen(method_ptr, max_method_len + 1);
                 if (actual_len > 0 && actual_len <= max_method_len)
                 {
@@ -104,13 +104,13 @@ namespace http
                 else
                 {
                     parser.request.method = Method::UNKNOWN;
-                    std::cerr << "[ERROR] parser_.method is invalid or not null-terminated\n";
+                    std::cerr << "[ERROR] parser_.method is not null-terminated or too long\n";
                 }
             }
             else
             {
                 parser.request.method = Method::UNKNOWN;
-                std::cerr << "[ERROR] parser_.method is null in on_headers_complete\n";
+                std::cerr << "[ERROR] parser_.method is null or invalid in on_headers_complete\n";
             }
             return 0;
         }
