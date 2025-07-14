@@ -90,8 +90,8 @@ namespace http
                 parser.last_header_value.clear();
             }
             // Set HTTP method from llhttp parser state (IMPORTANT FIX)
-            parser.request.method = method_from_string(parser.parser_.method);
-            // Here you can set HTTP version or other connection parameters if needed
+            parser.request.method = method_from_string(
+                std::string(reinterpret_cast<const char *>(parser.parser_.method)));
             return 0;
         }
 
