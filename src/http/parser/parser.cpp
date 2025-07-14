@@ -12,6 +12,7 @@ namespace http
     {
         llhttp_settings_init(&settings_);
         settings_.on_message_begin = &Parser::on_message_begin;
+        settings_.on_method = &Parser::on_method; // <-- Added this line
         settings_.on_url = &Parser::on_url;
         settings_.on_header_field = &Parser::on_header_field;
         settings_.on_header_value = &Parser::on_header_value;
@@ -60,6 +61,13 @@ namespace http
     {
         // No-op, could reset state if needed
         return 0;
+    }
+
+    int Parser::on_method(llhttp_t *parser, const char *at, size_t length)
+    {
+        Parser *self = get_self(parser);
+        // This calls your modular callback, which should update self->request.method
+        return callbacks::on_method(*self, std::string(at, length));
     }
 
     int Parser::on_url(llhttp_t *parser, const char *at, size_t length)
