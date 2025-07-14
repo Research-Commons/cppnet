@@ -41,6 +41,7 @@ namespace http
 
         // Static llhttp callback functions
         static int on_message_begin(llhttp_t *parser);
+        static int on_method(llhttp_t *parser, const char *at, size_t length); // <-- Added this line
         static int on_url(llhttp_t *parser, const char *at, size_t length);
         static int on_header_field(llhttp_t *parser, const char *at, size_t length);
         static int on_header_value(llhttp_t *parser, const char *at, size_t length);
