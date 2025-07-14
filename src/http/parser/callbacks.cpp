@@ -89,15 +89,20 @@ namespace http
                 parser.last_header_field.clear();
                 parser.last_header_value.clear();
             }
-            // Set HTTP method from llhttp parser state (with null check!)
-            if (parser.parser_.method)
+
+            // Corrected: cast parser.parser_.method to const char* for both ternary and string construction
+            const char *method_ptr = reinterpret_cast<const char *>(parser.parser_.method);
+            std::cout << "parser.parser_.method: "
+                      << (method_ptr ? method_ptr : "NULL") << std::endl;
+
+            if (method_ptr)
             {
-                parser.request.method = method_from_string(
-                    std::string(reinterpret_cast<const char *>(parser.parser_.method)));
+                parser.request.method = method_from_string(std::string(method_ptr));
             }
             else
             {
                 parser.request.method = Method::UNKNOWN;
+                std::cerr << "[ERROR] parser_.method is null in on_headers_complete\n";
             }
             return 0;
         }
