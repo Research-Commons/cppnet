@@ -7,19 +7,12 @@ int main()
     http::Parser parser;
 
     // A simple HTTP GET request string
-    // std::string http_request = "GET /test?sort=desc HTTP/1.1\r\n"
-    //                            "Host: example.com\r\n"
-    //                            "Content-Type: application/json\r\n"
-    //                            "Content-Length: 15\r\n"
-    //                            "\r\n"
-    //                            "{\"key\": \"value\"}";
-
-    std::string http_request = "GET / HTTP/1.1\r\nHost: test\r\n\r\n";
-
-    // for (int i = 0; i < http_request.size(); ++i)
-    // {
-    //     std::cout << "Char " << i << ": '" << http_request[i] << "' (" << int(http_request[i]) << ")\n";
-    // }
+    std::string http_request = "GET /test?sort=desc HTTP/1.1\r\n"
+                               "Host: example.com\r\n"
+                               "Content-Type: application/json\r\n"
+                               "Content-Length: 15\r\n"
+                               "\r\n"
+                               "{\"key\": \"value\"}";
 
     bool success = parser.feed(http_request.c_str(), http_request.size());
 
