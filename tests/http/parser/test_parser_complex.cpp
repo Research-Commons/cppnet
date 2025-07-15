@@ -7,7 +7,18 @@ int main()
     http::Parser parser;
 
     std::string http_request =
-        "GET /test?sort=desc HTTP/1.1\r\nHost: example.com\r\nContent-Type: application/json\r\nContent-Length: 16\r\n\r\n{\"key\": \"value\"}";
+        "PATCH /api/v2/resource/456?sort=desc&filter=active HTTP/1.1\r\n"
+        "Host: api.example.org\r\n"
+        "Accept: application/json\r\n"
+        "Content-Type: application/json\r\n"
+        "X-Request-ID: 123e4567-e89b-12d3-a456-426614174000\r\n"
+        "Authorization: Bearer ABCDEFGHIJKL123456\r\n"
+        "Content-Length: 114\r\n"
+        "\r\n"
+        "{"
+        "\"user\": {\"id\": 42, \"roles\": [\"admin\",\"user\"]}, "
+        "\"updates\": [{\"op\": \"replace\", \"path\": \"/name\", \"value\": \"Alice\"}]"
+        "}";
 
     bool success = parser.feed(http_request.c_str(), http_request.size());
 
