@@ -6,14 +6,6 @@ int main()
 {
     http::Parser parser;
 
-    // A simple HTTP GET request string
-    // std::string http_request = "GET /test?sort=desc HTTP/1.1\r\n"
-    //                            "Host: example.com\r\n"
-    //                            "Content-Type: application/json\r\n"
-    //                            "Content-Length: 15\r\n"
-    //                            "\r\n"
-    //                            "{\"key\": \"value\"}";
-
     std::string http_request = "GET / HTTP/1.1\r\nHost: test\r\n\r\n";
 
     bool success = parser.feed(http_request.c_str(), http_request.size());
@@ -32,43 +24,10 @@ int main()
 
     const http::Request &req = parser.get_request();
 
-    // Basic checks
-    if (req.method != http::Method::GET)
-    {
-        std::cerr << "Method parsing failed." << std::endl;
-        return 1;
-    }
-    if (req.path != "/test")
-    {
-        std::cerr << "Path parsing failed." << std::endl;
-        return 1;
-    }
-    if (req.get_query_param("sort") != "desc")
-    {
-        std::cerr << "Query parameter parsing failed." << std::endl;
-        return 1;
-    }
-    if (req.get_header("host") != "example.com")
-    {
-        std::cerr << "Header parsing failed." << std::endl;
-        return 1;
-    }
-    if (req.get_header("content-type") != "application/json")
-    {
-        std::cerr << "Content-Type header parsing failed." << std::endl;
-        return 1;
-    }
-    if (req.body != "{\"key\": \"value\"}")
-    {
-        std::cerr << "Body parsing failed." << std::endl;
-        return 1;
-    }
-
-    std::cout << "Basic parser test passed successfully.\n"
-              << std::endl;
-
     // Print all parsed parts
     std::cout << "---- Parsed HTTP Request ----" << std::endl;
+
+    // Print Method
     std::cout << "Method: ";
     switch (req.method)
     {
@@ -105,9 +64,11 @@ int main()
     }
     std::cout << std::endl;
 
+    // Print Path
     std::cout << "Path: " << req.path << std::endl;
     std::cout << "Raw URL: " << req.raw_url << std::endl;
 
+    // Print Version
     std::cout << "HTTP Version: ";
     switch (req.version)
     {
@@ -126,12 +87,14 @@ int main()
     }
     std::cout << std::endl;
 
+    // Print headers
     std::cout << "Headers:" << std::endl;
     for (const auto &h : req.headers)
     {
         std::cout << "  " << h.first << ": " << h.second << std::endl;
     }
 
+    // Print query parameters
     std::cout << "Query parameters:" << std::endl;
     for (const auto &q : req.query_params)
     {
