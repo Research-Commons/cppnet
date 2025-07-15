@@ -1,5 +1,6 @@
 #include "../include/http/parser/callbacks.h"
 #include "../include/http/parser/parser.h"
+#include "../include/http/parser/utils.h"
 #include <cstring>
 #include <iostream>
 #include <sstream>
