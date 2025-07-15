@@ -60,6 +60,10 @@ namespace http
         in_value_ = false;
     }
 
+    Parser::~Parser()
+    {
+    }
+
     void Parser::reset()
     {
         llhttp_reset(&parser_);
