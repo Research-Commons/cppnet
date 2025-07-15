@@ -11,7 +11,6 @@ namespace http
     {
     public:
         Parser();
-        ~Parser();
 
         // Reset parser state for a new HTTP message
         void reset();
