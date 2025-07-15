@@ -7,6 +7,7 @@ int main()
     http::Parser parser;
 
     std::string http_request = "GET / HTTP/1.1\r\nHost: test\r\n\r\n";
+    // post also works in these kind of requests
 
     bool success = parser.feed(http_request.c_str(), http_request.size());
 
