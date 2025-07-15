@@ -13,7 +13,7 @@ namespace http
     // Callback functions for HTTP parsing events
     namespace callbacks
     {
-
+        Method method_from_string(const std::string &method_str);
         // Called when the HTTP method is parsed
         int on_method(Parser &parser, const std::string &method_str);
 

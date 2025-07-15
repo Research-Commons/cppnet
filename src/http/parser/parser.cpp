@@ -4,6 +4,7 @@
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
+
 // random comment to mark successful commit
 
 namespace http
@@ -13,7 +14,6 @@ namespace http
     {
         llhttp_settings_init(&settings_);
         settings_.on_message_begin = &Parser::on_message_begin;
-        // REMOVED: settings_.on_method = &Parser::on_method;
         settings_.on_url = &Parser::on_url;
         settings_.on_header_field = &Parser::on_header_field;
         settings_.on_header_value = &Parser::on_header_value;
@@ -71,8 +71,6 @@ namespace http
         return 0;
     }
 
-    // REMOVED: Parser::on_method
-
     int Parser::on_url(llhttp_t *parser, const char *at, size_t length)
     {
         Parser *self = get_self(parser);
@@ -108,8 +106,9 @@ namespace http
             self->request.version = Version::UNKNOWN;
         }
 
-        // Set HTTP method from llhttp
-        self->request.method = static_cast<http::Method>(parser->method);
+        // Set HTTP method from llhttp using the robust string mapping
+        self->request.method = http::callbacks::method_from_string(
+            llhttp_method_name((llhttp_method_t)parser->method));
 
         return callbacks::on_headers_complete(*self);
     }

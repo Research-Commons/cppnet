@@ -2,7 +2,8 @@
 #include "../include/http/parser/parser.h"
 #include <cstring>
 #include <iostream>
-// random comment to mark succesful commit
+
+// random comment to mark successful commit
 namespace http
 {
 
@@ -10,7 +11,7 @@ namespace http
     {
 
         // Helper function to convert method string to enum
-        static Method method_from_string(const std::string &method_str)
+        Method method_from_string(const std::string &method_str)
         {
             if (method_str == "GET")
                 return Method::GET;
@@ -33,6 +34,7 @@ namespace http
             return Method::UNKNOWN;
         }
 
+        // (Not used by llhttp, can be removed if not used elsewhere)
         int on_method(Parser &parser, const std::string &method_str)
         {
             parser.request.method = method_from_string(method_str);
@@ -42,7 +44,6 @@ namespace http
         int on_url(Parser &parser, const char *at, size_t length)
         {
             parser.request.raw_url.append(at, length);
-
             // Find query string start
             size_t qs_pos = parser.request.raw_url.find('?');
             if (qs_pos != std::string::npos)
@@ -56,7 +57,6 @@ namespace http
                 parser.request.path = parser.request.raw_url;
                 parser.request.query_params.clear();
             }
-
             return 0;
         }
 

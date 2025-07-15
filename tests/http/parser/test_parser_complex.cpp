@@ -7,11 +7,7 @@ int main()
     http::Parser parser;
 
     std::string http_request =
-        "GET /test?sort=desc HTTP/1.1\r\n"
-        "Host: example.com\r\n"
-        "Content-Type: application/json\r\n"
-        "Content-Length: 15\r\n"
-        "\r\n"
+        "GET /test HTTP/1.1\r\nHost: example.com\r\nContent-Type: application/json\r\nContent-Length: 15\r\n\r\n"
         "{\"key\": \"value\"}";
 
     bool success = parser.feed(http_request.c_str(), http_request.size());
