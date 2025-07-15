@@ -16,6 +16,10 @@ int main()
 
     bool success = parser.feed(http_request.c_str(), http_request.size());
 
+    for (size_t i = 0; i < http_request.size(); ++i)
+        printf("%02X ", static_cast<unsigned char>(http_request[i]));
+    printf("\n");
+
     if (!success)
     {
         std::cerr << "Parsing failed." << std::endl;

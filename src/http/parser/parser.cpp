@@ -4,7 +4,8 @@
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
-// random comment to mark succesful commit
+// random comment to mark successful commit
+
 namespace http
 {
 
@@ -12,7 +13,7 @@ namespace http
     {
         llhttp_settings_init(&settings_);
         settings_.on_message_begin = &Parser::on_message_begin;
-        settings_.on_method = &Parser::on_method; // <-- Added this line
+        // REMOVED: settings_.on_method = &Parser::on_method;
         settings_.on_url = &Parser::on_url;
         settings_.on_header_field = &Parser::on_header_field;
         settings_.on_header_value = &Parser::on_header_value;
@@ -20,7 +21,13 @@ namespace http
         settings_.on_body = &Parser::on_body;
         settings_.on_message_complete = &Parser::on_message_complete;
 
-        reset();
+        llhttp_init(&parser_, HTTP_REQUEST, &settings_);
+        parser_.data = this;
+
+        request = Request();
+        last_header_field.clear();
+        last_header_value.clear();
+        message_complete = false;
     }
 
     Parser::~Parser()
@@ -30,8 +37,9 @@ namespace http
 
     void Parser::reset()
     {
-        llhttp_init(&parser_, HTTP_REQUEST, &settings_);
+        llhttp_reset(&parser_);
         parser_.data = this;
+
         request = Request();
         last_header_field.clear();
         last_header_value.clear();
@@ -63,12 +71,7 @@ namespace http
         return 0;
     }
 
-    int Parser::on_method(llhttp_t *parser, const char *at, size_t length)
-    {
-        Parser *self = get_self(parser);
-        // This calls your modular callback, which should update self->request.method
-        return callbacks::on_method(*self, std::string(at, length));
-    }
+    // REMOVED: Parser::on_method
 
     int Parser::on_url(llhttp_t *parser, const char *at, size_t length)
     {
@@ -104,6 +107,9 @@ namespace http
         default:
             self->request.version = Version::UNKNOWN;
         }
+
+        // Set HTTP method from llhttp
+        self->request.method = static_cast<http::Method>(parser->method);
 
         return callbacks::on_headers_complete(*self);
     }
