@@ -1,23 +1,40 @@
 #pragma once
-#include "llhttp.h"
-#include <stddef.h>
+
+#include <string>
+#include "../request.h"
+#include "utils.h"
 
 namespace http
 {
 
-    // Forward declaration
+    // Forward declaration of the parser class (to be implemented later)
     class Parser;
 
-    namespace Callbacks
+    // Callback functions for HTTP parsing events
+    namespace callbacks
     {
 
-        int on_message_begin(llhttp_t *parser);
-        int on_url(llhttp_t *parser, const char *at, size_t length);
-        int on_header_field(llhttp_t *parser, const char *at, size_t length);
-        int on_header_value(llhttp_t *parser, const char *at, size_t length);
-        int on_headers_complete(llhttp_t *parser);
-        int on_body(llhttp_t *parser, const char *at, size_t length);
-        int on_message_complete(llhttp_t *parser);
+        // Called when the HTTP method is parsed
+        int on_method(Parser &parser, const std::string &method_str);
 
-    } // namespace Callbacks
+        // Called when URL data is parsed (may be called multiple times)
+        int on_url(Parser &parser, const char *at, size_t length);
+
+        // Called when a header field (name) is parsed (may be called multiple times)
+        int on_header_field(Parser &parser, const char *at, size_t length);
+
+        // Called when a header value is parsed (may be called multiple times)
+        int on_header_value(Parser &parser, const char *at, size_t length);
+
+        // Called when all headers are complete
+        int on_headers_complete(Parser &parser);
+
+        // Called when body data is parsed
+        int on_body(Parser &parser, const char *at, size_t length);
+
+        // Called when the entire message is complete
+        int on_message_complete(Parser &parser);
+
+    } // namespace callbacks
+
 } // namespace http
