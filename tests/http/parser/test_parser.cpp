@@ -16,11 +16,6 @@ int main()
 
     std::string http_request = "GET / HTTP/1.1\r\nHost: test\r\n\r\n";
 
-    for (int i = 0; i < http_request.size(); ++i)
-    {
-        std::cout << "Char " << i << ": '" << http_request[i] << "' (" << int(http_request[i]) << ")\n";
-    }
-
     bool success = parser.feed(http_request.c_str(), http_request.size());
 
     if (!success)
