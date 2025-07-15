@@ -5,7 +5,8 @@ include_directories(/usr/local/include)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 add_executable(test_parser
-    tests/http/parser/test_parser.cpp
+    tests/http/parser/test_parser_simple.cpp
+    tests/http/parser/test_parser_complex.cpp
     src/http/parser/parser.cpp
     src/http/request.cpp
     src/http/parser/callbacks.cpp
