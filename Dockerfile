@@ -9,7 +9,8 @@ RUN apt-get update && \
         curl \
         wget \
         pkg-config \
-        libssl-dev
+        libssl-dev \
+        nlohmann-json3-dev
 
 # Remove conflicting package before Node.js install
 RUN apt-get remove -y libnode-dev || true
