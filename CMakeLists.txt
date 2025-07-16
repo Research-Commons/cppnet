@@ -5,6 +5,8 @@ project(cppnet)
 include_directories(/usr/local/include)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
+find_package(nlohmann_json 3.2.0 REQUIRED)
+
 # Simple test executable
 add_executable(test_parser_simple
     tests/http/parser/test_parser_simple.cpp
@@ -14,7 +16,7 @@ add_executable(test_parser_simple
     src/http/parser/utils.cpp
     # Add more sources as required
 )
-target_link_libraries(test_parser_simple llhttp)
+target_link_libraries(test_parser_simple llhttp nlohmann_json::nlohmann_json)
 
 # Complex test executable
 add_executable(test_parser_complex
@@ -25,4 +27,4 @@ add_executable(test_parser_complex
     src/http/parser/utils.cpp
     # Add more sources as required
 )
-target_link_libraries(test_parser_complex llhttp)
+target_link_libraries(test_parser_complex llhttp nlohmann_json::nlohmann_json)
