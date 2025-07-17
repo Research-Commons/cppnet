@@ -12,6 +12,22 @@ RUN apt-get update && \
         libssl-dev \
         nlohmann-json3-dev
 
+# Install Google Test (gtest) and build the static libraries
+RUN apt-get install -y libgtest-dev cmake && \
+    cd /usr/src/googletest/googletest && \
+    mkdir -p build && \
+    cd build && \
+    cmake .. && \
+    make && \
+    cp lib/libgtest.a /usr/lib/ && \
+    cp lib/libgtest_main.a /usr/lib/ && \
+    cd / && \
+    rm -rf /usr/src/googletest/googletest/build
+
+RUN mkdir -p /usr/local/lib/googletest && \
+    ln -sf /usr/lib/libgtest.a /usr/local/lib/googletest/libgtest.a && \
+    ln -sf /usr/lib/libgtest_main.a /usr/local/lib/googletest/libgtest_main.a
+
 # Remove conflicting package before Node.js install
 RUN apt-get remove -y libnode-dev || true
 
