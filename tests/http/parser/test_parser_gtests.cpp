@@ -43,5 +43,5 @@ TEST(HttpParserTest, ParsesPatchRequestCorrectly)
     EXPECT_EQ(req.headers.at("authorization"), "Bearer ABCDEFGHIJKL123456");
     EXPECT_EQ(req.query_params.at("sort"), "desc");
     EXPECT_EQ(req.query_params.at("filter"), "active");
-    EXPECT_NE(req.body.find("\"name\": \"Alice\""), std::string::npos);
+    EXPECT_NE(req.body.find("\"value\": \"Alice\""), std::string::npos);
 }
