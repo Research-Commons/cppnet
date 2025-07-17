@@ -30,8 +30,8 @@ TEST(HttpParserTest, ParsesPatchRequestCorrectly)
     //     std::cout << "[QUERY ] " << q.first << ": " << q.second << std::endl;
 
     // Check that all keys exist before using .at()
-    ASSERT_TRUE(req.headers.count("Host")) << "Missing header: Host";
-    ASSERT_TRUE(req.headers.count("Authorization")) << "Missing header: Authorization";
+    ASSERT_TRUE(req.headers.count("host")) << "Missing header: host";
+    ASSERT_TRUE(req.headers.count("authorization")) << "Missing header: authorization";
     ASSERT_TRUE(req.query_params.count("sort")) << "Missing query param: sort";
     ASSERT_TRUE(req.query_params.count("filter")) << "Missing query param: filter";
 
@@ -39,8 +39,8 @@ TEST(HttpParserTest, ParsesPatchRequestCorrectly)
     EXPECT_EQ(req.path, "/api/v2/resource/456");
     EXPECT_EQ(req.raw_url, "/api/v2/resource/456?sort=desc&filter=active");
     EXPECT_EQ(req.version, http::Version::HTTP_1_1);
-    EXPECT_EQ(req.headers.at("Host"), "api.example.org");
-    EXPECT_EQ(req.headers.at("Authorization"), "Bearer ABCDEFGHIJKL123456");
+    EXPECT_EQ(req.headers.at("host"), "api.example.org");
+    EXPECT_EQ(req.headers.at("authorization"), "Bearer ABCDEFGHIJKL123456");
     EXPECT_EQ(req.query_params.at("sort"), "desc");
     EXPECT_EQ(req.query_params.at("filter"), "active");
     EXPECT_NE(req.body.find("\"name\": \"Alice\""), std::string::npos);
