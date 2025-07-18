@@ -1,23 +1,27 @@
 #include <gtest/gtest.h>
 #include "../include/http/parser/parser.h"
+#include <map>
 
-// Description and expectation for each test case
+// Extended struct to support various query parameters flexibly
 struct HTTPTestCase
 {
-    std::string name; // Test case label for display
-    std::string request;
+    std::string name;    // Description label for display
+    std::string request; // HTTP request text
+
     http::Method method;
     std::string path;
     std::string raw_url;
     http::Version version;
-    std::string host;           // "" if not required to check
-    std::string authorization;  // "" if not required to check
-    std::string query_sort;     // "" if not required to check
-    std::string query_filter;   // "" if not required to check
-    std::string body_substring; // "" if not required to check
+    std::string host;          // "" = do not check
+    std::string authorization; // "" = do not check
+
+    // Map of expected query params and their expected values (optional)
+    std::map<std::string, std::string> expected_queries;
+
+    // Body substring to look for, "" = do not check
+    std::string body_substring;
 };
 
-// Parameterized test fixture
 class HTTPParserGTest : public ::testing::TestWithParam<HTTPTestCase>
 {
 };
@@ -49,17 +53,12 @@ TEST_P(HTTPParserGTest, ParsesVariousRequests)
         ASSERT_TRUE(it != req.headers.end()) << "Missing header: authorization in " << t.name;
         EXPECT_EQ(it->second, t.authorization) << t.name;
     }
-    if (!t.query_sort.empty())
+    // Check all query param expectations from the map
+    for (const auto &entry : t.expected_queries)
     {
-        auto it = req.query_params.find("sort");
-        ASSERT_TRUE(it != req.query_params.end()) << "Missing query param: sort in " << t.name;
-        EXPECT_EQ(it->second, t.query_sort) << t.name;
-    }
-    if (!t.query_filter.empty())
-    {
-        auto it = req.query_params.find("filter");
-        ASSERT_TRUE(it != req.query_params.end()) << "Missing query param: filter in " << t.name;
-        EXPECT_EQ(it->second, t.query_filter) << t.name;
+        auto it = req.query_params.find(entry.first);
+        ASSERT_TRUE(it != req.query_params.end()) << "Missing query param: '" << entry.first << "' in " << t.name;
+        EXPECT_EQ(it->second, entry.second) << "Query param value mismatch for '" << entry.first << "' in " << t.name;
     }
     if (!t.body_substring.empty())
     {
@@ -74,7 +73,7 @@ INSTANTIATE_TEST_SUITE_P(
     HTTPParserGTest,
     ::testing::Values(
         HTTPTestCase{
-            "PATCH, two queries, full headers, JSON body",
+            "PATCH, two queries (sort/filter), full headers, JSON body",
             "PATCH /api/v2/resource/456?sort=desc&filter=active HTTP/1.1\r\n"
             "Host: api.example.org\r\n"
             "Accept: application/json\r\n"
@@ -87,17 +86,27 @@ INSTANTIATE_TEST_SUITE_P(
             "\"user\": {\"id\": 42, \"roles\": [\"admin\",\"user\"]}, "
             "\"updates\": [{\"op\": \"replace\", \"path\": \"/name\", \"value\": \"Alice\"}]"
             "}",
-            http::Method::PATCH, "/api/v2/resource/456", "/api/v2/resource/456?sort=desc&filter=active",
+            http::Method::PATCH,
+            "/api/v2/resource/456",
+            "/api/v2/resource/456?sort=desc&filter=active",
             http::Version::HTTP_1_1,
-            "api.example.org", "Bearer ABCDEFGHIJKL123456", "desc", "active", "\"value\": \"Alice\""},
+            "api.example.org",
+            "Bearer ABCDEFGHIJKL123456",
+            {{"sort", "desc"}, {"filter", "active"}},
+            "\"value\": \"Alice\""},
         HTTPTestCase{
-            "GET, one query, minimal headers, empty body",
+            "GET, one query (token), minimal headers, empty body",
             "GET /foo/bar?token=xyz HTTP/1.1\r\n"
             "Host: localhost\r\n"
             "\r\n",
-            http::Method::GET, "/foo/bar", "/foo/bar?token=xyz",
+            http::Method::GET,
+            "/foo/bar",
+            "/foo/bar?token=xyz",
             http::Version::HTTP_1_1,
-            "localhost", "", "xyz", "", ""},
+            "localhost",
+            "",
+            {{"token", "xyz"}},
+            ""},
         HTTPTestCase{
             "POST, no query, minimal headers, with body",
             "POST /submit HTTP/1.1\r\n"
@@ -105,22 +114,37 @@ INSTANTIATE_TEST_SUITE_P(
             "Content-Length: 11\r\n"
             "\r\n"
             "hello=world",
-            http::Method::POST, "/submit", "/submit",
+            http::Method::POST,
+            "/submit",
+            "/submit",
             http::Version::HTTP_1_1,
-            "server.example", "", "", "", "hello=world"},
+            "server.example",
+            "",
+            {},
+            "hello=world"},
         HTTPTestCase{
             "PUT, no query, auth header, empty body",
             "PUT /data HTTP/1.1\r\n"
             "Host: 192.168.1.1\r\n"
             "Authorization: Bearer ABC\r\n"
             "\r\n",
-            http::Method::PUT, "/data", "/data",
+            http::Method::PUT,
+            "/data",
+            "/data",
             http::Version::HTTP_1_1,
-            "192.168.1.1", "Bearer ABC", "", "", ""},
+            "192.168.1.1",
+            "Bearer ABC",
+            {},
+            ""},
         HTTPTestCase{
-            "DELETE, one query, no headers, empty body",
+            "DELETE, one query (item), no headers, empty body",
             "DELETE /del?item=42 HTTP/1.1\r\n"
             "\r\n",
-            http::Method::DELETE_, "/del", "/del?item=42",
+            http::Method::DELETE_,
+            "/del",
+            "/del?item=42",
             http::Version::HTTP_1_1,
-            "", "", "42", "", ""}));
+            "",
+            "",
+            {{"item", "42"}},
+            ""}));
