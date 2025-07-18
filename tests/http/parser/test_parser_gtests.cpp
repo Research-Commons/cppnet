@@ -23,13 +23,6 @@ TEST(HttpParserTest, ParsesPatchRequestCorrectly)
 
     const http::Request &req = parser.get_request();
 
-    // Debug: Uncomment these to see the keys received
-    // for (const auto& h : req.headers)
-    //     std::cout << "[HEADER] " << h.first << ": " << h.second << std::endl;
-    // for (const auto& q : req.query_params)
-    //     std::cout << "[QUERY ] " << q.first << ": " << q.second << std::endl;
-
-    // Check that all keys exist before using .at()
     ASSERT_TRUE(req.headers.count("host")) << "Missing header: host";
     ASSERT_TRUE(req.headers.count("authorization")) << "Missing header: authorization";
     ASSERT_TRUE(req.query_params.count("sort")) << "Missing query param: sort";
