@@ -47,3 +47,22 @@ target_link_libraries(test_parser_gtests
     gtest_main
     pthread
 )
+
+# --------------------------------------------------------
+# JSON Router/Server Demo (main.cpp) Target
+# --------------------------------------------------------
+add_executable(run_json_router_demo
+    src/main.cpp
+    src/http/parser/parser.cpp
+    src/http/request.cpp
+    src/http/parser/callbacks.cpp
+    src/http/parser/utils.cpp
+    # router and handlers:
+    # src/http/router.cpp           # If you add this source file in future
+    # src/http/handlers/json_handler.cpp  # If you implement it as .cpp, otherwise comment this line out
+    # Add more .cpp files for new handlers as required
+)
+target_link_libraries(run_json_router_demo
+    llhttp
+    nlohmann_json::nlohmann_json
+)
