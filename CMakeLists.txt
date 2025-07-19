@@ -52,7 +52,7 @@ target_link_libraries(test_parser_gtests
 # JSON Router/Server Demo (main.cpp) Target
 # --------------------------------------------------------
 add_executable(run_json_router_demo
-    src/main.cpp
+    src/http/main.cpp
     src/http/parser/parser.cpp
     src/http/request.cpp
     src/http/parser/callbacks.cpp
