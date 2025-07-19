@@ -10,8 +10,6 @@ namespace http
 
         /// Base class for any handler: JSON, Protobuf, etc.
         /// Users subclass this and implement the handle() method.
-        /// (If you want, you can make this a pure interface with =0, but
-        /// a default virtual destructor is sufficient for now.)
         class BaseHandler
         {
         public:
