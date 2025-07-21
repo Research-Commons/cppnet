@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <nlohmann/json.hpp>
 #include "../include/http/parser/parser.h"
 
 int main()
@@ -21,7 +22,6 @@ int main()
         "}";
 
     bool success = parser.feed(http_request.c_str(), http_request.size());
-
     if (!success)
     {
         std::cerr << "Parsing failed." << std::endl;
@@ -116,5 +116,38 @@ int main()
     // Print Body
     std::cout << "Body: " << req.body << std::endl;
 
+    // --- PARSE AND PRINT THE JSON BODY USING NLOHMANN::JSON ---
+    try
+    {
+        nlohmann::json body = nlohmann::json::parse(req.body);
+        std::cout << "\n--- Deserialized JSON Body ---" << std::endl;
+        std::cout << body.dump(2) << std::endl;
+
+        // Example: access fields individually
+        if (body.contains("user"))
+        {
+            auto user = body["user"];
+            std::cout << "User id: " << user["id"] << std::endl;
+            std::cout << "User roles: ";
+            for (const auto &r : user["roles"])
+                std::cout << r << " ";
+            std::cout << std::endl;
+        }
+        if (body.contains("updates"))
+        {
+            std::cout << "Updates:" << std::endl;
+            for (const auto &upd : body["updates"])
+            {
+                std::cout << "  op: " << upd["op"]
+                          << ", path: " << upd["path"]
+                          << ", value: " << upd["value"] << std::endl;
+            }
+        }
+    }
+    catch (const nlohmann::json::parse_error &e)
+    {
+        std::cerr << "Failed to parse JSON body: " << e.what() << std::endl;
+    }
+    // ----------------------------------------
     return 0;
 }
