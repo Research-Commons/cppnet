@@ -4,7 +4,7 @@
 #include <nlohmann/json.hpp>
 #include "http/request.h"
 #include "http/handlers/base_handler.h"
-#include "util/query_params.h"
+#include "../../utils/query_params.h"
 
 namespace http
 {
