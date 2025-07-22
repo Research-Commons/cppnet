@@ -2,44 +2,42 @@
 #include <string>
 #include "http/parser/parser.h"
 #include "http/router.h"
-#include "http/handlers/json_handler.h"
+#include "http/handlers/get_handler.h"
 
 int main()
 {
-    // 1. Compose a raw HTTP request as it might arrive from a client (GET /hello)
+    // Simulate a client GET request with query params (limit, page, sort)
     std::string raw_request =
-        "GET /hello HTTP/1.1\r\n"
+        "GET /echo?limit=25&page=3&sort=asc HTTP/1.1\r\n"
         "Host: localhost\r\n"
         "Connection: close\r\n"
         "\r\n";
 
-    // 2. Parse the HTTP request using your parser
+    // Parse the HTTP request string using the parser
     http::Parser parser;
     bool parse_ok = parser.feed(raw_request.data(), raw_request.size());
     if (!parse_ok || !parser.message_complete)
     {
-        std::cerr << "Failed to parse HTTP request!" << std::endl;
+        std::cerr << "Failed to parse HTTP request." << std::endl;
         return 1;
     }
-    // Request object is now ready
     const http::Request &request = parser.request;
 
-    // 3. Create router and register a JSON handler for GET /hello
+    // Register GET /echo with the EchoGetHandler
     http::Router router;
-    auto jsonHandler = std::make_shared<http::handlers::JsonHelloHandler>();
-    router.add_route(http::Method::GET, "/hello",
-                     [jsonHandler](const http::Request &req)
+    auto echoHandler = std::make_shared<http::handlers::EchoGetHandler>();
+    router.add_route(http::Method::GET, "/echo",
+                     [echoHandler](const http::Request &req)
                      {
-                         return jsonHandler->handle(req);
+                         return echoHandler->handle(req);
                      });
 
-    // 4. Route the parsed request
+    // Dispatch the parsed request
     std::string response = router.route_request(request);
-    std::cout << "Response to GET /hello:\n"
+    std::cout << "Response to GET /echo:\n"
               << response << std::endl;
 
-    // 5. Try an unregistered route to show 404
-    // new parser for a different path
+    // Now try a request to a non-registered route (/unknown) to verify 404 case
     std::string raw_unknown =
         "GET /unknown HTTP/1.1\r\n"
         "Host: localhost\r\n"
@@ -48,7 +46,7 @@ int main()
     bool parse2 = parser2.feed(raw_unknown.data(), raw_unknown.size());
     if (!parse2 || !parser2.message_complete)
     {
-        std::cerr << "Failed to parse /unknown request!" << std::endl;
+        std::cerr << "Failed to parse /unknown request." << std::endl;
         return 1;
     }
     const http::Request &badRequest = parser2.request;
