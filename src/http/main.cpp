@@ -1,130 +1,132 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <unordered_map>
+#include <nlohmann/json.hpp>
 #include "http/parser/parser.h"
 #include "http/router.h"
+#include "http/handlers/base_handler.h"
 #include "http/handlers/json_handler.h"
 
-// Add a dummy data handler inline for demonstration (simulate GET /user?username=alice)
-class SimulatedUserGetHandler : public http::handlers::BaseHandler
+// Shared user "database"
+using UserStore = std::unordered_map<std::string, nlohmann::json>;
+
+class UserPostHandler : public http::handlers::BaseHandler
 {
 public:
+    UserPostHandler(UserStore &store) : users(store) {}
+    std::string handle(const http::Request &req) const override
+    {
+        nlohmann::json resp;
+        try
+        {
+            nlohmann::json posted = nlohmann::json::parse(req.body);
+            if (!posted.contains("username"))
+            {
+                resp["success"] = false;
+                resp["error"] = "Missing username";
+                return resp.dump(2);
+            }
+            std::string username = posted["username"].get<std::string>();
+            users[username] = posted;
+            resp["success"] = true;
+            resp["message"] = "User stored";
+            resp["user"] = posted;
+        }
+        catch (const nlohmann::json::parse_error &)
+        {
+            resp["success"] = false;
+            resp["error"] = "Invalid JSON in POST body";
+        }
+        return resp.dump(2);
+    }
+
+private:
+    UserStore &users;
+};
+
+class UserGetHandler : public http::handlers::BaseHandler
+{
+public:
+    UserGetHandler(const UserStore &store) : users(store) {}
     std::string handle(const http::Request &request) const override
     {
         nlohmann::json resp;
-
-        // Simulate some user "database"
-        std::unordered_map<std::string, nlohmann::json> fake_users = {
-            {"alice", {{"id", 1}, {"name", "Alice"}, {"email", "alice@example.com"}}},
-            {"bob", {{"id", 2}, {"name", "Bob"}, {"email", "bob@example.com"}}}};
-
         auto username = util::get_param(request.query_params, "username");
-
-        if (username && fake_users.count(*username))
+        if (username && users.count(*username))
         {
             resp["success"] = true;
-            resp["user"] = fake_users.at(*username);
-            return resp.dump(2);
+            resp["user"] = users.at(*username);
         }
         else
         {
             resp["success"] = false;
             resp["error"] = "User not found";
-            return resp.dump(2);
         }
+        return resp.dump(2);
     }
+
+private:
+    const UserStore &users;
 };
 
 int main()
 {
     http::Router router;
 
-    // Register various example handlers for /echo with different methods
-    auto helloHandler = std::make_shared<http::handlers::JsonHelloHandler>();
-    auto getHandler = std::make_shared<http::handlers::EchoGetHandler>();
-    auto postHandler = std::make_shared<http::handlers::EchoPostHandler>();
-    auto putHandler = std::make_shared<http::handlers::EchoPutHandler>();
-    auto patchHandler = std::make_shared<http::handlers::EchoPatchHandler>();
-    auto delHandler = std::make_shared<http::handlers::EchoDeleteHandler>();
-    auto userGet = std::make_shared<SimulatedUserGetHandler>();
+    // Simulated shared state
+    UserStore users;
 
-    router.add_route(http::Method::GET, "/hello", [helloHandler](const http::Request &req)
-                     { return helloHandler->handle(req); });
-
-    router.add_route(http::Method::GET, "/echo", [getHandler](const http::Request &req)
-                     { return getHandler->handle(req); });
-
-    router.add_route(http::Method::POST, "/echo", [postHandler](const http::Request &req)
-                     { return postHandler->handle(req); });
-
-    router.add_route(http::Method::PUT, "/echo", [putHandler](const http::Request &req)
-                     { return putHandler->handle(req); });
-
-    router.add_route(http::Method::PATCH, "/echo", [patchHandler](const http::Request &req)
-                     { return patchHandler->handle(req); });
-
-    router.add_route(http::Method::DELETE_, "/echo", [delHandler](const http::Request &req)
-                     { return delHandler->handle(req); });
+    // Register the GET and POST /user handlers using the shared state
+    auto userGet = std::make_shared<UserGetHandler>(users);
+    auto userPost = std::make_shared<UserPostHandler>(users);
 
     router.add_route(http::Method::GET, "/user", [userGet](const http::Request &req)
                      { return userGet->handle(req); });
+    router.add_route(http::Method::POST, "/user", [userPost](const http::Request &req)
+                     { return userPost->handle(req); });
 
-    // Simulate a GET /echo request with query params
+    // First: POST /user with a new user
     {
-        std::string raw_request =
-            "GET /echo?limit=25&page=3&sort=asc HTTP/1.1\r\n"
+        std::string raw_post =
+            "POST /user HTTP/1.1\r\n"
             "Host: localhost\r\n"
-            "\r\n";
+            "Content-Type: application/json\r\n"
+            "Content-Length: 55\r\n"
+            "\r\n"
+            "{\"username\":\"alice\",\"age\":31,\"email\":\"alice@demo.test\"}";
         http::Parser parser;
-        if (parser.feed(raw_request.data(), raw_request.size()) && parser.message_complete)
+        if (parser.feed(raw_post.data(), raw_post.size()) && parser.message_complete)
         {
-            std::cout << "\nGET /echo response:\n"
+            std::cout << "\nPOST /user response:\n"
                       << router.route_request(parser.request) << std::endl;
         }
     }
 
-    // Simulate a GET /user (simulated database)
+    // Now: GET /user?username=alice should find the user just posted
     {
-        std::string user_req =
+        std::string get_req =
             "GET /user?username=alice HTTP/1.1\r\n"
             "Host: localhost\r\n"
             "\r\n";
         http::Parser parser;
-        if (parser.feed(user_req.data(), user_req.size()) && parser.message_complete)
+        if (parser.feed(get_req.data(), get_req.size()) && parser.message_complete)
         {
             std::cout << "\nGET /user?username=alice response:\n"
                       << router.route_request(parser.request) << std::endl;
         }
     }
 
-    // Simulate a POST /echo with a JSON body
+    // Test GET for non-existing user
     {
-        // "Content-Length: 18" below is the size of the JSON body {"foo":42}
-        std::string raw_request =
-            "POST /echo HTTP/1.1\r\n"
-            "Host: localhost\r\n"
-            "Content-Type: application/json\r\n"
-            "Content-Length: 11\r\n"
-            "\r\n"
-            "{\"foo\":42}";
-        http::Parser parser;
-        if (parser.feed(raw_request.data(), raw_request.size()) && parser.message_complete)
-        {
-            std::cout << "\nPOST /echo response:\n"
-                      << router.route_request(parser.request) << std::endl;
-        }
-    }
-
-    // Simulate a GET to unknown route (should show 404)
-    {
-        std::string unknown_req =
-            "GET /unknown HTTP/1.1\r\n"
+        std::string get_req =
+            "GET /user?username=bob HTTP/1.1\r\n"
             "Host: localhost\r\n"
             "\r\n";
         http::Parser parser;
-        if (parser.feed(unknown_req.data(), unknown_req.size()) && parser.message_complete)
+        if (parser.feed(get_req.data(), get_req.size()) && parser.message_complete)
         {
-            std::cout << "\nGET /unknown response:\n"
+            std::cout << "\nGET /user?username=bob response:\n"
                       << router.route_request(parser.request) << std::endl;
         }
     }
