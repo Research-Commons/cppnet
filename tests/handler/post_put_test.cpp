@@ -8,7 +8,7 @@
 #include "http/router.h"
 #include "http/handlers/base_handler.h"
 #include "http/handlers/json_handler.h"
-#include "../../utils/query_params.h"
+#include "include/utils/query_params.h"
 
 using UserStore = std::unordered_map<std::string, nlohmann::json>;
 
