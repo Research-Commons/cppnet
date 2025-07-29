@@ -66,3 +66,38 @@ target_link_libraries(run_json_router_demo
     llhttp
     nlohmann_json::nlohmann_json
 )
+
+# ----------------------------------------
+# Handler method sequence test executables
+# ----------------------------------------
+
+add_executable(test_post_delete
+    tests/handler/post_delete_test.cpp
+    src/http/parser/parser.cpp
+    src/http/request.cpp
+    src/http/parser/callbacks.cpp
+    src/http/parser/utils.cpp
+    # add other .cpp as required
+)
+target_link_libraries(test_post_delete llhttp nlohmann_json::nlohmann_json)
+
+add_executable(test_post_patch
+    tests/handler/post_patch_test.cpp
+    src/http/parser/parser.cpp
+    src/http/request.cpp
+    src/http/parser/callbacks.cpp
+    src/http/parser/utils.cpp
+    # add other .cpp as required
+)
+target_link_libraries(test_post_patch llhttp nlohmann_json::nlohmann_json)
+
+add_executable(test_post_put
+    tests/handler/post_put_test.cpp
+    src/http/parser/parser.cpp
+    src/http/request.cpp
+    src/http/parser/callbacks.cpp
+    src/http/parser/utils.cpp
+    # add other .cpp as required
+)
+target_link_libraries(test_post_put llhttp nlohmann_json::nlohmann_json)
+
