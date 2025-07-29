@@ -1,4 +1,5 @@
 // test_post_get_delete_get.cpp
+
 #include <iostream>
 #include <string>
 #include <memory>
@@ -8,7 +9,10 @@
 #include "http/router.h"
 #include "http/handlers/base_handler.h"
 #include "http/handlers/json_handler.h"
-#include "utils/query_params.h"
+#include "utils/query_params.h" // Corrected include!
+
+// ---- Move this to the top so all handlers see it ----
+using UserStore = std::unordered_map<std::string, nlohmann::json>;
 
 // Handler for deleting user
 class UserDeleteHandler : public http::handlers::BaseHandler
@@ -36,8 +40,6 @@ public:
 private:
     UserStore &users;
 };
-
-using UserStore = std::unordered_map<std::string, nlohmann::json>;
 
 class UserPostHandler : public http::handlers::BaseHandler
 {
