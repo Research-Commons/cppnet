@@ -11,12 +11,25 @@ The project is organized into several key components:
 *   **Socket Layer:** (Currently Remaining) This layer will manage the actual network communication, including listening for incoming connections, receiving data, and sending responses.
 
 ### File Organization:
-
 *   **`include/`**: Contains header files defining the interfaces for the parser, router, handlers, and any other public APIs.
+    *   It is expected to find header files that expose the functionalities of the components, facilitating their integration.
 *   **`src/`**: Contains the source code for the components mentioned above.  Notably includes `src/http/parser/parser.cpp`, `src/http/request.cpp`, `src/http/parser/callbacks.cpp`, and `src/http/parser/utils.cpp` which form the HTTP parsing functionality.
+    *   This directory houses the implementations of the core functionalities, particularly focusing on HTTP request parsing.
 *   **`tests/`**: Contains unit tests for the various components. Includes gtests and simple tests of handlers.
+    *   This directory ensures the reliability and correctness of the individual components through dedicated unit tests.
+*   **`Dockerfile`**: Defines the environment and dependencies required to build and run the application within a container.
+    *   Ensures consistency across different deployment environments by encapsulating the build process and dependencies.
+*   **`CMakeLists.txt`**: Specifies the build process, dependencies, and executables to be built using CMake.
+    *   CMake uses this file to manage the build process, link libraries, and create the necessary executables.
+*   **.gitignore**: Lists the files and directories that Git should ignore.
+    *   Prevents unnecessary files, such as build artifacts and temporary files, from being added to the repository.
+*   **.git/**: Contains the Git repository metadata and version control information.
+    *   This hidden directory is crucial for version control, tracking changes, and managing the project's history.
 
 ## Usage
+
+To start using `cppnet` library you will need to complete Socket Layer implementation to make it fully functional.
+
 
 To use `cppnet`, you will need to:
 
@@ -83,3 +96,8 @@ A `Dockerfile` is provided to build the project in a containerized environment. 
 ## Git Log
 
 *   Removed the mains from Cmake
+
+## Repository Structure
+Below is the structure of the repository:
+```text
+cppnet/
