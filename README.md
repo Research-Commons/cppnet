@@ -102,9 +102,7 @@ This project follows layered architecture pattern.
         *   **`post_patch_test.cpp`**: Tests the `PATCH` handler
         *   **`post_delete_test.cpp`**: Tests the `DELETE` handler
 
-    *   **`Dockerfile`**: Defines the environment and dependencies required to build and run the application within a container.
-
-
+*   **`Dockerfile`**: Defines the environment and dependencies required to build and run the application within a container.
     *   Ensures consistency across different deployment environments by encapsulating the build process and dependencies.
 
 *   **`CMakeLists.txt`**: Specifies the build process, dependencies, and executables to be built using CMake.
