@@ -66,13 +66,8 @@ cppnet/
             *   **`callbacks.h`**: Declares callback functions that are invoked by the `llhttp` parser at various stages of parsing, such as when the method, URL, headers, and body are parsed.
             *   **`parser.h`**: Defines the `Parser` class, which uses the `llhttp` library to parse HTTP requests. It manages the parser state and provides access to the parsed `Request` object.
             *   **`utils.h`**: Provides utility functions for URL decoding, query string parsing, header normalization, and string trimming.
-
-        *   **`types.h`**: Defines the enums `Method` for HTTP methods (GET, POST, etc.), `Version` for HTTP versions, and `StatusCode` for HTTP status codes. It also defines type aliases for headers and query parameters.
-        *   **`handlers/`**: Contains the base class and implementations for request handlers.
-        *   **`parser/`**: Contains the components responsible for parsing HTTP requests.
-            *   **`callbacks.h`**: Declares callback functions that are invoked by the `llhttp` parser at various stages of parsing, such as when the method, URL, headers, and body are parsed.
-            *   **`parser.h`**: Defines the `Parser` class, which uses the `llhttp` library to parse HTTP requests. It manages the parser state and provides access to the parsed `Request` object.
-            *   **`utils.h`**: Provides utility functions for URL decoding, query string parsing, header normalization, and string trimming.
+        *   **`utils/`**: Contains general-purpose utility functions.
+            *   **`query_params.h`**: Provides type-safe helper functions (`get_param`, `get_with_default`) for extracting and converting query parameters from a map, using `std::optional` to handle missing values gracefully.
 
 *   **`src/`**: Contains the source code for the components mentioned above.  Notably includes `src/http/parser/parser.cpp`, `src/http/request.cpp`, `src/http/parser/callbacks.cpp`, and `src/http/parser/utils.cpp` which form the HTTP parsing functionality.
     *   This directory houses the implementations of the core functionalities, particularly focusing on HTTP request parsing.
