@@ -93,14 +93,15 @@ This project follows layered architecture pattern.
     *   This directory houses the implementations of the core functionalities, particularly focusing on HTTP request parsing.
 
 *   **`tests/`**: Contains unit tests for the various components. Includes gtests and simple tests of handlers.
-    *   **`http/parser/`**: Contains test files for the HTTP parser.
-        *   **`test_parser_simple.cpp`**: Provides a basic test case for the HTTP parser using a simple HTTP request.
-        *   **`test_parser_complex.cpp`**: Offers a more complex test case with various headers, query parameters, and a JSON body.
-        *   **`test_parser_gtests.cpp`**: Uses Google Test (gtest) framework to define a set of test cases for the HTTP parser, covering different HTTP methods, versions, headers, and query parameters.
-    *   **`handler/`**: Contains test files for the request handlers.
-        *   **`post_put_test.cpp`**: Tests the `POST` and `PUT` handlers for user management, verifying the storage and retrieval of user data.
-        *   **`post_patch_test.cpp`**: Tests the `PATCH` handler
-        *   **`post_delete_test.cpp`**: Tests the `DELETE` handler
+    *   This directory ensures the reliability and correctness of the individual components through dedicated unit tests.
+        *   **`http/parser/`**: Contains test files for the HTTP parser.
+            *   **`test_parser_simple.cpp`**: Provides a basic test case for the HTTP parser using a simple HTTP request.
+            *   **`test_parser_complex.cpp`**: Offers a more complex test case with various headers, query parameters, and a JSON body.
+            *   **`test_parser_gtests.cpp`**: Uses Google Test (gtest) framework to define a set of test cases for the HTTP parser, covering different HTTP methods, versions, headers, and query parameters.
+        *   **`handler/`**: Contains test files for the request handlers.
+            *   **`post_put_test.cpp`**: Tests the `POST` and `PUT` handlers for user management, verifying the storage and retrieval of user data.
+            *   **`post_patch_test.cpp`**: Tests the `PATCH` handler
+            *   **`post_delete_test.cpp`**: Tests the `DELETE` handler
 
 *   **`Dockerfile`**: Defines the environment and dependencies required to build and run the application within a container.
     *   Ensures consistency across different deployment environments by encapsulating the build process and dependencies.
