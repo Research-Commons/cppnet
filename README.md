@@ -10,13 +10,17 @@
 
 ## Project Structure
 The project is organized into several key components:
+### Layers
+This project follows layered architecture pattern.
+*   **Parsing Layer**: Responsible for parsing incoming HTTP requests.
+*   **Routing Layer**: Directs requests to appropriate handlers.
+*   **Business Logic Handling Layer**: Contains handlers for different API endpoints.
+*   **Socket Layer**: (Currently Remaining) Manages network communication using `asio` or similar C++ networking library.
 ### Core Components
 *   **Parser:** This component is responsible for parsing incoming data, determining whether it is in JSON or Protobuf format, and converting it into a usable data structure.
 *   **Router:** The router directs incoming requests to the appropriate handler based on the request type or path. It acts as a central dispatch point for network traffic.
-
 *   **Handler:** Handlers are the functional units that process the parsed data and generate responses. Different handlers can be created for different request types or API endpoints.
 *   **Socket Layer:** (Currently Remaining) This layer will manage the actual network communication, including listening for incoming connections, receiving data, and sending responses.
-
 ### File Organization:
 
 *   **`include/`**: Contains header files defining the interfaces for the parser, router, handlers, and any other public APIs.
