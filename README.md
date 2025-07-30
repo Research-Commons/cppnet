@@ -68,7 +68,12 @@ The project is organized into several key components:
 
 
 
-            *   **`json_handler.h`**: Includes several `Json...Handler` classes like `JsonHelloHandler`, `EchoGetHandler`, `EchoPostHandler`, `EchoPutHandler`, `EchoPatchHandler`, and `EchoDeleteHandler`, each responsible for handling different types of JSON-based requests. They use `nlohmann::json` for JSON serialization and deserialization.
+
+
+
+
+
+
 
 
 
@@ -76,6 +81,13 @@ The project is organized into several key components:
 
 *   **`src/`**: Contains the source code for the components mentioned above.  Notably includes `src/http/parser/parser.cpp`, `src/http/request.cpp`, `src/http/parser/callbacks.cpp`, and `src/http/parser/utils.cpp` which form the HTTP parsing functionality.
     *   This directory houses the implementations of the core functionalities, particularly focusing on HTTP request parsing.
+        *   **`request.cpp`**: Implements the methods of the `Request` class, such as `get_header` and `get_query_param`, which provide convenient access to header and query parameter values.
+        *   **`parser/callbacks.cpp`**: Implements the callback functions that are invoked by the `llhttp` parser. These functions populate the `Request` object with data parsed from the HTTP request.
+        *   **`parser/parser.cpp`**: Implements the `Parser` class, which uses the `llhttp` library to parse HTTP requests. It manages the parser state, initializes `llhttp`, feeds data to the parser, and provides access to the parsed `Request` object.
+        *   **`parser/utils.cpp`**: Implements the utility functions for URL decoding (`url_decode`), query string parsing (`parse_query_string`), header normalization (`normalize_header_field`), and string trimming (`trim`).
+
+
+
 
 *   **`tests/`**: Contains unit tests for the various components. Includes gtests and simple tests of handlers.
     *   This directory ensures the reliability and correctness of the individual components through dedicated unit tests.
