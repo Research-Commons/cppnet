@@ -34,32 +34,6 @@ This project follows layered architecture pattern.
             *   **`parser.h`**: Defines the `Parser` class, which uses the `llhttp` library to parse HTTP requests. It manages the parser state and provides access to the parsed `Request` object.
             *   **`utils.h`**: Provides utility functions for URL decoding, query string parsing, header normalization, and string trimming.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         *   **`types.h`**: Defines the enums `Method` for HTTP methods (GET, POST, etc.), `Version` for HTTP versions, and `StatusCode` for HTTP status codes. It also defines type aliases for headers and query parameters.
         *   **`handlers/`**: Contains the base class and implementations for request handlers.
         *   **`parser/`**: Contains the components responsible for parsing HTTP requests.
@@ -67,30 +41,12 @@ This project follows layered architecture pattern.
             *   **`parser.h`**: Defines the `Parser` class, which uses the `llhttp` library to parse HTTP requests. It manages the parser state and provides access to the parsed `Request` object.
             *   **`utils.h`**: Provides utility functions for URL decoding, query string parsing, header normalization, and string trimming.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 *   **`src/`**: Contains the source code for the components mentioned above.  Notably includes `src/http/parser/parser.cpp`, `src/http/request.cpp`, `src/http/parser/callbacks.cpp`, and `src/http/parser/utils.cpp` which form the HTTP parsing functionality.
     *   This directory houses the implementations of the core functionalities, particularly focusing on HTTP request parsing.
         *   **`request.cpp`**: Implements the methods of the `Request` class, such as `get_header` and `get_query_param`, which provide convenient access to header and query parameter values.
         *   **`parser/callbacks.cpp`**: Implements the callback functions that are invoked by the `llhttp` parser. These functions populate the `Request` object with data parsed from the HTTP request.
         *   **`parser/parser.cpp`**: Implements the `Parser` class, which uses the `llhttp` library to parse HTTP requests. It manages the parser state, initializes `llhttp`, feeds data to the parser, and provides access to the parsed `Request` object.
         *   **`parser/utils.cpp`**: Implements the utility functions for URL decoding (`url_decode`), query string parsing (`parse_query_string`), header normalization (`normalize_header_field`), and string trimming (`trim`).
-
-
-
-
-    *   This directory houses the implementations of the core functionalities, particularly focusing on HTTP request parsing.
 
 *   **`tests/`**: Contains unit tests for the various components. Includes gtests and simple tests of handlers.
     *   This directory ensures the reliability and correctness of the individual components through dedicated unit tests.
@@ -174,39 +130,3 @@ To run the tests, execute the corresponding binary from the `build` directory. F
 ```bash
 ./test_parser_gtests
 ```
-
-## Repository Structure
-Below is the structure of the repository:
-```text
-cppnet/
-├── CMakeLists.txt
-├── .gitignore
-├── Dockerfile
-├── include/
-│   └── http/ 
-│       ├── handlers/ 
-│       │   ├── base_handler.h 
-│       │   └── json_handler.h 
-│       ├── parser/ 
-│       │   ├── callbacks.h 
-│       │   ├── parser.h 
-│       │   └── utils.h 
-│       ├── request.h 
-│       ├── router.h 
-│       └── types.h 
-└── src/
-    └── http/ 
-        └── parser/ 
-            ├── callbacks.cpp 
-            ├── parser.cpp 
-            └── utils.cpp 
-└── tests/
-    └── http/ 
-        └── parser/ 
-            ├── test_parser_complex.cpp 
-            ├── test_parser_gtests.cpp 
-            └── test_parser_simple.cpp 
-    └── handler/ 
-        ├── post_delete_test.cpp 
-        ├── post_patch_test.cpp 
-        └── post_put_test.cpp
