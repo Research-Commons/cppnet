@@ -174,20 +174,6 @@ To run the tests, execute the corresponding binary from the `build` directory. F
 ```bash
 ./test_parser_gtests
 ```
-## Contributing
-
-Contributions to `cppnet` are welcome! Please fork the repository, create a feature branch, and submit a pull request with your changes.
-
-## License
-[Add License Information Here]
-
-
-## Docker
-
-A `Dockerfile` is provided to build the project in a containerized environment.  This sets up all dependencies, including `llhttp` and `nlohmann_json`.
-
-
-
 
 ## Repository Structure
 Below is the structure of the repository:
