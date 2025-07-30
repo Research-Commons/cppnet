@@ -220,3 +220,86 @@ The router executes the found handler function, which in turn calls the `handle(
 ### Step 5: The Response
 
 The response string is returned up the call stack from the handler to the router, and finally to the application's main loop. The Socket Layer would then write this response string back to the client, completing the request-response cycle.
+
+## Adding New Endpoints: Creating Handlers
+
+To add new functionality to your server, you create and register custom handlers. A handler is a class responsible for the business logic of a specific API endpoint (e.g., creating a user, retrieving a product).
+
+The process involves three main steps, as demonstrated in the handler tests (`tests/handler/*.cpp`).
+
+### Step 1: Define Your Handler Class
+
+First, create a new class that inherits from `http::handlers::BaseHandler`. This class will contain the logic for your endpoint. It's common to pass any shared state (like a database connection or an in-memory store) to the handler's constructor.
+
+Here is an example of a `UserPostHandler` that creates a new user in an in-memory `UserStore`.
+
+```cpp
+#include "http/handlers/base_handler.h"
+#include "http/request.h"
+#include <nlohmann/json.hpp>
+#include <unordered_map>
+
+using UserStore = std::unordered_map<std::string, nlohmann::json>;
+
+class UserPostHandler : public http::handlers::BaseHandler
+{
+public:
+    // Store a reference to the shared data store
+    UserPostHandler(UserStore &store) : users(store) {}
+
+    // The core logic for handling the request
+    std::string handle(const http::Request &req) const override
+    {
+        nlohmann::json resp;
+        try
+        {
+            nlohmann::json posted = nlohmann::json::parse(req.body);
+            std::string username = posted["username"].get<std::string>();
+            users[username] = posted; // Store the user data
+            resp["success"] = true;
+            resp["user"] = posted;
+        }
+        catch (const std::exception& e)
+        {
+            resp["success"] = false;
+            resp["error"] = "Invalid JSON or missing username";
+        }
+        return resp.dump(2);
+    }
+
+private:
+    UserStore &users;
+};
+```
+
+### Step 2: Instantiate and Register the Handler
+
+In your server's setup code, you need to create an instance of your handler and tell the `Router` which HTTP method and path it should respond to. Since a single handler instance can be used for many requests, it's best to manage it with a smart pointer like `std::shared_ptr`.
+
+```cpp
+#include "http/router.h"
+#include <memory>
+
+int main() {
+    http::Router router;
+    UserStore user_data_store; // Shared data store
+
+    // Create an instance of the handler
+    auto user_post_handler = std::make_shared<UserPostHandler>(user_data_store);
+
+    // Register it with the router
+    router.add_route(
+        http::Method::POST,
+        "/user",
+        [user_post_handler](const http::Request &req) {
+            return user_post_handler->handle(req);
+        }
+    );
+
+    // ... server startup logic would go here ...
+}
+```
+
+### Step 3: Test the Endpoint
+
+Once the server is running, a `POST` request to `/user` with the appropriate JSON body will now be processed by your `UserPostHandler`, which will update the `user_data_store` and return a JSON confirmation. This pattern can be repeated for all your API endpoints (`GET`, `PUT`, `PATCH`, `DELETE`, etc.), as seen in `post_put_test.cpp`, `post_patch_test.cpp`, and `post_delete_test.cpp`.
