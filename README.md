@@ -2,10 +2,15 @@
 
 `cppnet` is a C++-based networking library designed to facilitate the creation of servers capable of handling both JSON and Protobuf data formats. It provides a modular architecture with components for parsing, routing, and handling network requests.
 
+## Features
+
+*   JSON and Protobuf support
+*   Modular design
+*   Easy to use
+
 ## Project Structure
-
 The project is organized into several key components:
-
+### Core Components
 *   **Parser:** This component is responsible for parsing incoming data, determining whether it is in JSON or Protobuf format, and converting it into a usable data structure.
 *   **Router:** The router directs incoming requests to the appropriate handler based on the request type or path. It acts as a central dispatch point for network traffic.
 
@@ -19,6 +24,40 @@ The project is organized into several key components:
         *   **`router.h`**: Defines the `Router` class, responsible for mapping incoming HTTP requests to the appropriate handler functions. It includes the `RouteKey` struct for identifying routes and uses `std::unordered_map` for efficient route lookups.
         *   **`request.h`**: Defines the `Request` class, which encapsulates all the information about an incoming HTTP request, such as the method, URL, headers, and body. It provides utility functions for accessing header and query parameter values.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         *   **`types.h`**: Defines the enums `Method` for HTTP methods (GET, POST, etc.), `Version` for HTTP versions, and `StatusCode` for HTTP status codes. It also defines type aliases for headers and query parameters.
         *   **`handlers/`**: Contains the base class and implementations for request handlers.
             *   **`base_handler.h`**: Defines the abstract `BaseHandler` class, which serves as the base class for all handlers. It specifies the `handle` method that derived classes must implement to process requests and return responses.
@@ -26,6 +65,7 @@ The project is organized into several key components:
             *   **`callbacks.h`**: Declares callback functions that are invoked by the `llhttp` parser at various stages of parsing, such as when the method, URL, headers, and body are parsed.
             *   **`parser.h`**: Defines the `Parser` class, which uses the `llhttp` library to parse HTTP requests. It manages the parser state and provides access to the parsed `Request` object.
             *   **`utils.h`**: Provides utility functions for URL decoding, query string parsing, header normalization, and string trimming.
+
 
 
             *   **`json_handler.h`**: Includes several `Json...Handler` classes like `JsonHelloHandler`, `EchoGetHandler`, `EchoPostHandler`, `EchoPutHandler`, `EchoPatchHandler`, and `EchoDeleteHandler`, each responsible for handling different types of JSON-based requests. They use `nlohmann::json` for JSON serialization and deserialization.
@@ -54,20 +94,6 @@ The project is organized into several key components:
 *   **.git/**: Contains the Git repository metadata and version control information.
     *   This hidden directory is crucial for version control, tracking changes, and managing the project's history.
 
-## Usage
-
-To start using `cppnet` library you will need to complete Socket Layer implementation to make it fully functional.
-
-
-To use `cppnet`, you will need to:
-
-1.  Implement the socket layer to handle network connections.
-
-
-2.  Define the routes in the router to map request types/paths to specific handlers.
-
-3.  Create handlers to process the data and generate appropriate responses.
-
 ## Building the Project
 
 The project uses CMake for building. Here's how to build it:
@@ -93,6 +119,21 @@ The project uses CMake for building. Here's how to build it:
     ```bash
     make
     ```
+
+
+## Usage
+
+To start using `cppnet` library you will need to complete Socket Layer implementation to make it fully functional.
+
+
+To use `cppnet`, you will need to:
+
+1.  Implement the socket layer to handle network connections.
+
+
+2.  Define the routes in the router to map request types/paths to specific handlers.
+
+3.  Create handlers to process the data and generate appropriate responses.
 
 ## Running Tests
 
