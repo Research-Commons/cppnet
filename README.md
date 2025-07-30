@@ -17,6 +17,42 @@ This project follows layered architecture pattern.
 *   **Business Logic Handling Layer**: Contains handlers for different API endpoints
 *   **Socket Layer**: (Currently Remaining) Manages network communication using `asio` or similar C++ networking library
 
+## Repository Structure
+Below is the structure of the repository:
+```text
+cppnet/
+├── CMakeLists.txt
+├── .gitignore
+├── Dockerfile
+├── include/
+│   └── http/ 
+│       ├── handlers/ 
+│       │   ├── base_handler.h 
+│       │   └── json_handler.h 
+│       ├── parser/ 
+│       │   ├── callbacks.h 
+│       │   ├── parser.h 
+│       │   └── utils.h 
+│       ├── request.h 
+│       ├── router.h 
+│       └── types.h 
+└── src/
+    └── http/ 
+        └── parser/ 
+            ├── callbacks.cpp 
+            ├── parser.cpp 
+            └── utils.cpp 
+└── tests/
+    └── http/ 
+        └── parser/ 
+            ├── test_parser_complex.cpp 
+            ├── test_parser_gtests.cpp 
+            └── test_parser_simple.cpp 
+    └── handler/ 
+        ├── post_delete_test.cpp 
+        ├── post_patch_test.cpp 
+        └── post_put_test.cpp
+
 ### File Organization:
 *   **`include/`**: Contains header files defining the interfaces for the parser, router, handlers, and any other public APIs.
     *   It is expected to find header files that expose the functionalities of the components, facilitating their integration.
