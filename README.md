@@ -11,8 +11,26 @@ The project is organized into several key components:
 *   **Socket Layer:** (Currently Remaining) This layer will manage the actual network communication, including listening for incoming connections, receiving data, and sending responses.
 
 ### File Organization:
+
 *   **`include/`**: Contains header files defining the interfaces for the parser, router, handlers, and any other public APIs.
     *   It is expected to find header files that expose the functionalities of the components, facilitating their integration.
+        *   **`router.h`**: Defines the `Router` class, responsible for mapping incoming HTTP requests to the appropriate handler functions. It includes the `RouteKey` struct for identifying routes and uses `std::unordered_map` for efficient route lookups.
+        *   **`request.h`**: Defines the `Request` class, which encapsulates all the information about an incoming HTTP request, such as the method, URL, headers, and body. It provides utility functions for accessing header and query parameter values.
+        *   **`types.h`**: Defines the enums `Method` for HTTP methods (GET, POST, etc.), `Version` for HTTP versions, and `StatusCode` for HTTP status codes. It also defines type aliases for headers and query parameters.
+        *   **`handlers/`**: Contains the base class and implementations for request handlers.
+            *   **`base_handler.h`**: Defines the abstract `BaseHandler` class, which serves as the base class for all handlers. It specifies the `handle` method that derived classes must implement to process requests and return responses.
+            *   **`json_handler.h`**: Includes several `Json...Handler` classes like `JsonHelloHandler`, `EchoGetHandler`, `EchoPostHandler`, `EchoPutHandler`, `EchoPatchHandler`, and `EchoDeleteHandler`, each responsible for handling different types of JSON-based requests. They use `nlohmann::json` for JSON serialization and deserialization.
+        *   **`parser/`**: Contains the components responsible for parsing HTTP requests.
+            *   **`callbacks.h`**: Declares callback functions that are invoked by the `llhttp` parser at various stages of parsing, such as when the method, URL, headers, and body are parsed.
+            *   **`parser.h`**: Defines the `Parser` class, which uses the `llhttp` library to parse HTTP requests. It manages the parser state and provides access to the parsed `Request` object.
+            *   **`utils.h`**: Provides utility functions for URL decoding, query string parsing, header normalization, and string trimming.
+
+
+
+
+
+
+
 *   **`src/`**: Contains the source code for the components mentioned above.  Notably includes `src/http/parser/parser.cpp`, `src/http/request.cpp`, `src/http/parser/callbacks.cpp`, and `src/http/parser/utils.cpp` which form the HTTP parsing functionality.
     *   This directory houses the implementations of the core functionalities, particularly focusing on HTTP request parsing.
 *   **`tests/`**: Contains unit tests for the various components. Includes gtests and simple tests of handlers.
