@@ -99,12 +99,7 @@ cppnet/
     *   CMake uses this file to manage the build process, link libraries, and create the necessary executables.
 
 *   **.gitignore**: Lists the files and directories that Git should ignore.
-
-
-
-    *   Prevents unnecessary files, such as build artifacts and temporary files, from being added to the repository.
-*   **.git/**: Contains the Git repository metadata and version control information.
-    *   This hidden directory is crucial for version control, tracking changes, and managing the project's history.
+    *   Prevents unnecessary files, such as build artifacts and temporary files (like build, .devcontainer, .vscode, etc), from being added to the repository.
 
 ## Building the Project
 
