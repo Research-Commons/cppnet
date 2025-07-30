@@ -147,6 +147,68 @@ To use `cppnet`, you will need to:
 
 3.  Create handlers to process the data and generate appropriate responses.
 
+## Happy Flow: A Request's Lifecycle
+
+This section illustrates the end-to-end journey of an HTTP request through the `cppnet` framework.
+
+### The Example Request
+
+Let's assume the server receives the following raw HTTP POST request:
+
+```http
+POST /user HTTP/1.1
+Host: localhost
+Content-Type: application/json
+Content-Length: 38
+
+{"username":"alice","role":"developer"}
+```
+
+### Step 1: Socket Layer (Receiving Data)
+
+The (yet to be implemented) Socket Layer, built with a library like **Asio**, listens for incoming connections. It reads the raw data from the socket into a buffer. This raw string is the input for the next stage.
+
+### Step 2: Parsing Layer (`http::Parser`)
+
+The raw request string is passed to an instance of `http::Parser`.
+
+1.  The `parser.feed(rawData, rawDataLength)` method is called.
+2.  Internally, the `llhttp` library processes the data. As it recognizes tokens, it invokes the static callbacks defined in `http::parser::Parser`.
+3.  These static methods delegate to the functions in `http::parser::callbacks`, which populate an `http::Request` object.
+    *   `llhttp_method_name` provides "POST", which `callbacks::method_from_string` converts to `http::Method::POST`.
+    *   `callbacks::on_url` is called with "/user", populating `request.path`.
+    *   `callbacks::on_header_field` and `callbacks::on_header_value` are called for each header, populating `request.headers`.
+    *   `callbacks::on_body` is called with the JSON payload, populating `request.body`.
+    *   `callbacks::on_message_complete` flags the parsing as finished.
+
+After this stage, the `http::Request` object inside the parser is fully populated:
+
+*   `request.method`: `http::Method::POST`
+*   `request.path`: `"/user"`
+*   `request.headers`: `{ "host": "localhost", "content-type": "application/json", ... }`
+*   `request.body`: `{"username":"alice","role":"developer"}`
+
+### Step 3: Routing Layer (`http::Router`)
+
+The populated `http::Request` object is retrieved from the parser and passed to `router.route_request(request)`.
+
+1.  The `Router` creates a `RouteKey` using `req.method` (POST) and `req.path` ("/user").
+2.  It performs a lookup in its internal `std::unordered_map` of routes.
+3.  It finds a matching entry that was previously registered with `router.add_route(http::Method::POST, "/user", ...)` and retrieves the associated handler function.
+
+### Step 4: Business Logic Handling Layer (`http::handlers`)
+
+The router executes the found handler function, which in turn calls the `handle()` method of a specific `http::handlers::BaseHandler` subclass (e.g., a `UserPostHandler` from the tests).
+
+1.  The `handler->handle(request)` method is executed.
+2.  Inside the handler, the `request.body` is parsed using `nlohmann::json`.
+3.  The business logic is performed (e.g., storing the new user in a database or map).
+4.  A response string is constructed, also typically using `nlohmann::json`. For example: `{"success":true,"message":"User stored","user":{"username":"alice","role":"developer"}}`.
+
+### Step 5: The Response
+
+The response string is returned up the call stack from the handler to the router, and finally to the application's main loop. The Socket Layer would then write this response string back to the client, completing the request-response cycle.
+
 ## Running Tests
 
 The project includes several test executables:
